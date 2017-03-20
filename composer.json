@@ -1,0 +1,26 @@
+{
+  "name": "integer-net/solr-magento2-categories-filter",
+  "description": "",
+  "require": {
+    "php": "~5.6.0|^7.0",
+    "integer-net/solr-magento2" : "^1.0.0"
+  },
+  "type": "magento2-module",
+  "license": [
+    "Proprietary"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "IntegerNet\\SolrCategoriesFilter\\": ""
+    }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:integer-net/solr-magento2.git"
+    }
+  ]
+}
