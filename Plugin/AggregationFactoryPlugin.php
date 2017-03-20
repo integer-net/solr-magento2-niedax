@@ -10,6 +10,7 @@
 
 namespace IntegerNet\SolrCategoriesFilter\Plugin;
 
+use Magento\Framework\Registry;
 use Magento\Framework\Search\Adapter\Mysql\AggregationFactory as Subject;
 use Magento\Catalog\Model\ResourceModel\Category\Collection as CategoryCollection;
 use Magento\Catalog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
@@ -24,15 +25,19 @@ class AggregationFactoryPlugin
      * @var int[]
      */
     private $allowedCategoryIds;
+    /**
+     * @var Registry
+     */
+    private $registry;
 
-    public function __construct(CategoryCollectionFactory $categoryCollectionFactory)
+    public function __construct(CategoryCollectionFactory $categoryCollectionFactory, Registry $registry)
     {
-
         $this->categoryCollectionFactory = $categoryCollectionFactory;
+        $this->registry = $registry;
     }
 
     /**
-     * Only accept category buckets on highest level (2)
+     * Only accept category buckets on lowest level (2)
      *
      * @param Subject $subject
      * @param array $rawAggregation
@@ -40,6 +45,12 @@ class AggregationFactoryPlugin
      */
     public function beforeCreate(Subject $subject, $rawAggregation)
     {
+        if ($this->registry->registry('current_category')) {
+            return [$rawAggregation];
+        }
+        if ((!isset($rawAggregation['category_bucket'])) || !is_array($rawAggregation['category_bucket'])) {
+            return [$rawAggregation];
+        }
         $categoryIds = array_keys($rawAggregation['category_bucket']);
         $this->allowedCategoryIds = $this->getAllowedCategoryIds($categoryIds);
 
